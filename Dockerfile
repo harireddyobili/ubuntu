@@ -1,18 +1,23 @@
-# Use the official Ubuntu base image
 FROM ubuntu:latest
 
-# Update the package repository and install the OpenSSH server
-RUN apt-get update && apt-get install -y openssh-server
+# Set environment variables to ensure non-interactive installation
+ENV DEBIAN_FRONTEND=noninteractive
 
-# Create the SSH directory and set up the root password
-RUN mkdir /var/run/sshd && echo 'root:password' | chpasswd
+# Update and install required packages
+RUN apt-get update && apt-get install -y \
+    openssh-server \
+    sudo \
+    && rm -rf /var/lib/apt/lists/*
 
-# Allow root login via SSH by modifying the sshd_config file
-RUN sed -i 's/#PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config
-RUN sed -i 's/#PasswordAuthentication yes/PasswordAuthentication yes/' /etc/ssh/sshd_config
+# Set root password
+RUN echo 'root:rootpassword' | chpasswd
 
-# Expose the SSH port
+# Configure SSH to allow root login with password
+RUN sed -i 's/#PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config \
+    && sed -i 's/#PasswordAuthentication yes/PasswordAuthentication yes/' /etc/ssh/sshd_config
+
+# Expose SSH port
 EXPOSE 22
 
-# Start the SSH service
+# Start SSH service
 CMD ["/usr/sbin/sshd", "-D"]
