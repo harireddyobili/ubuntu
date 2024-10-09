@@ -9,6 +9,9 @@ RUN apt-get update && apt-get install -y \
     sudo \
     && rm -rf /var/lib/apt/lists/*
 
+# Create privilege separation directory for SSH
+RUN mkdir -p /run/sshd
+
 # Set root password
 RUN echo 'root:rootpassword' | chpasswd
 
