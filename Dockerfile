@@ -9,6 +9,7 @@ RUN mkdir /var/run/sshd && echo 'root:password' | chpasswd
 
 # Allow root login via SSH by modifying the sshd_config file
 RUN sed -i 's/#PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config
+RUN sed -i 's/#PasswordAuthentication yes/PasswordAuthentication yes/' /etc/ssh/sshd_config
 
 # Expose the SSH port
 EXPOSE 22
